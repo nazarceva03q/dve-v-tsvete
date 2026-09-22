@@ -1,0 +1,12 @@
+{
+    "name":  "dve-v-tsvete",
+    "version":  "1.0.0",
+    "private":  true,
+    "scripts":  {
+                    "start":  "node server.cjs",
+                    "test":  "node tests/browser.cjs"
+                },
+    "devDependencies":  {
+                            "playwright":  "^1.55.0"
+                        }
+}

@@ -1,0 +1,7 @@
+source-materials/
+.env
+.env.*
+!.env.example
+node_modules/
+preview/
+data/
