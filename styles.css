@@ -32,3 +32,13 @@
 @media(max-width:760px){.hero-copy{width:100%;min-height:620px;padding:38px 24px}.hero-image{min-height:620px}.hero-image:after{background:linear-gradient(180deg,rgba(250,249,245,.94),rgba(250,249,245,.78) 68%,rgba(250,249,245,.18))}.photo-note{display:none}.holiday-grid{grid-template-columns:1fr}.extras-catalog{margin-top:50px}}
 .case-placeholder{aspect-ratio:16/10;background:#e4c6bd66;border-radius:18px;display:grid;place-items:center;margin:-12px -12px 26px;color:var(--olive);font-size:12px}.directions{grid-template-columns:repeat(5,1fr);row-gap:34px}
 @media(max-width:760px){.directions{grid-template-columns:repeat(2,1fr)}}
+
+/* Compact, consistent messenger shortcuts complement the primary navigation. */
+.header-socials{display:flex;gap:6px}
+.header-socials a{width:31px;height:31px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-size:9px;letter-spacing:.4px}
+.header-socials a:hover{background:var(--pink);border-color:var(--pink);transform:translateY(-2px)}
+@media(max-width:1100px){.header-socials{display:none}}
+.section-photo-placeholder{display:grid;place-items:center;background:linear-gradient(145deg,#efeee7,#e6ded8);color:var(--olive);border:1px solid var(--line)}
+.section-photo-placeholder span{max-width:190px;text-align:center;font:20px/1.25 Georgia,serif}
+.custom-art.section-photo-placeholder{height:430px;border-radius:24px}
+@media(max-width:760px){.custom-art.section-photo-placeholder{height:330px}}
