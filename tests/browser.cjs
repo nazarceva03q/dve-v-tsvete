@@ -12,6 +12,16 @@ await page.locator('img[loading="lazy"]').evaluateAll(a=>a.forEach(i=>i.loading=
 await page.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth>0));
 assert.equal(await page.locator('.directions a').count(),10);
 assert.equal(await page.locator('.directions .direction-art').count(),10);
+assert.equal(await page.locator('.directions .direction-art .camera-icon').count(),10);
+assert.equal(await page.locator('.direction-art').allTextContents().then(a=>a.every(t=>!t.trim())),true);
+assert.equal(await page.locator('.hero img,.hero-round').count(),0);
+assert.equal(await page.locator('.hero-photo .camera-icon').count(),1);
+assert.equal(await page.locator('.service-photo .camera-icon').count(),3);
+assert.equal(await page.locator('.autumn-image .camera-icon').count(),1);
+assert.equal(await page.locator('.hero-copy>p').innerText(),'Соберём даже небольшой букет со вкусом под любой бюджет');
+assert.equal(await page.locator('.autumn h2').innerText(),'Теплые оттенки');
+assert.equal(await page.locator('.autumn p').innerText(),'Выразительные цветы, уютные сочетания и букеты');
+assert.equal(await page.locator('#workshops').innerText().then(t=>t.includes('Дню учителя')),false);
 assert.equal(await page.locator('main img:not(.hero-image img):not(#reviewList img)').count(),0);
 assert.equal(await page.locator('.logo img').count(),2);
 assert.equal(await page.locator('.logo img').first().evaluate(img=>{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);const pixels=ctx.getImageData(0,0,c.width,c.height).data;let transparent=false,ink=false;for(let i=3;i<pixels.length;i+=4){if(pixels[i]===0)transparent=true;if(pixels[i]>200)ink=true}return transparent&&ink}),true);
@@ -23,6 +33,11 @@ assert.deepEqual(await page.locator('.review-photo img').evaluateAll(a=>a.map(i=
 assert.equal(await page.locator('body').innerText().then(t=>t.includes('\u2014')),false);
 await page.screenshot({path:'preview/desktop.png',fullPage:true});
 await page.locator('.header').screenshot({path:'preview/header.png'});
+await page.locator('.hero').screenshot({path:'preview/hero.png'});
+await page.locator('.directions a').first().hover();
+await page.waitForTimeout(250);
+assert.notEqual(await page.locator('.direction-art').first().evaluate(e=>getComputedStyle(e).transform),'none');
+await page.mouse.move(0,0);
 await page.locator('[data-add="mixed"]').click();
 await page.locator('[data-action="cart"]').click();
 assert.equal(await page.locator('.cart-item').count(),1);
@@ -48,12 +63,20 @@ await page.locator('img[loading="lazy"]').evaluateAll(a=>a.forEach(i=>i.loading=
 await page.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth>0));
 assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
 await page.screenshot({path:'preview/mobile.png',fullPage:true});
+await page.locator('.header').screenshot({path:'preview/mobile-header.png'});
 await page.locator('.menu-trigger').click();assert.equal(await page.locator('#menuDialog').evaluate(d=>d.open),true);
 await page.locator('#menuDialog a[href="#reviews"]').click();assert.equal(await page.locator('#menuDialog').evaluate(d=>d.open),false);
-for(const width of [320,375,768,1024]){
+for(const width of [320,375,390,430,768,1024]){
  await page.setViewportSize({width,height:900});
  const overflow=await page.evaluate(()=>[...document.querySelectorAll('body *')].filter(e=>{let a=e.parentElement;while(a&&a!==document.body){if(['auto','hidden','scroll','clip'].includes(getComputedStyle(a).overflowX))return false;a=a.parentElement}return e.getBoundingClientRect().right>innerWidth+1}).slice(0,12).map(e=>e.tagName+'.'+e.className+': '+Math.round(e.getBoundingClientRect().right)));
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'No overflow at '+width+': '+overflow.join(', '));
+ if(width<=760){
+  const boxes=await page.locator('.header-actions .icon-button').evaluateAll(a=>a.map(e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right}}));
+  assert.ok(boxes[1].left-boxes[0].right>=0&&boxes[1].left-boxes[0].right<=8);
+  assert.ok(boxes[1].right<=width);
+  assert.equal(await page.locator('#cartCount').isVisible(),true);
+  assert.ok(await page.locator('.assurances').evaluate(e=>parseFloat(getComputedStyle(e).fontSize))>=15);
+ }
 }
 await page.locator('.directions [data-category="Цветы поштучно"]').click();
 assert.equal(await page.locator('#products .product-card').count(),1);
